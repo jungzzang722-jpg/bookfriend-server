@@ -1,3 +1,38 @@
+let chatTurn = 0; // 대화 횟수를 추적하는 전역 변수
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+
+  appendMsg(msg, 'user');
+  input.value = '';
+  showTyping();
+
+  try {
+    const res = await fetch(SERVER_URL + '/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+    const data = await res.json();
+    hideTyping();
+    appendMsg(data.reply, 'bot');
+
+    // --- [추가] 자동 전환 로직 ---
+    chatTurn++; 
+    
+    // 대화가 3번 왕복(사용자 3번, 봇 3번)했을 때 자동으로 저장 절차 시작
+    if (chatTurn >= 3) {
+      startAutoArchive(data.reply); 
+    }
+    // ----------------------------
+
+  } catch(e) {
+    hideTyping();
+    appendMsg('잠깐, 말이 늦게 도착하나봐. 🤍', 'bot');
+  }
+}
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
