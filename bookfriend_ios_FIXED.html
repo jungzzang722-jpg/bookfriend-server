@@ -2,73 +2,71 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>책친구</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>책친구 FINAL</title>
 
 <style>
 :root{
-  --bg:#F4EFE8;
-  --main:#D8B384;
-  --dark:#2F1B0F;
+  --bg:#F2EDEA;
+  --main:#C4A07C;
+  --dark:#3E2010;
+  --light:#E0CEB8;
+  --sab:env(safe-area-inset-bottom);
 }
 
 body{
   margin:0;
-  font-family:-apple-system, sans-serif;
-  background:linear-gradient(#F4EFE8,#EAD8BC);
-  overflow:hidden;
+  font-family:sans-serif;
+  background:var(--bg);
 }
 
-/* 화면 */
 .screen{
-  position:absolute;
-  inset:0;
   display:none;
+  height:100vh;
+}
+
+.screen.active{
+  display:flex;
   flex-direction:column;
-  animation:fade .5s;
-}
-.screen.active{display:flex;}
-
-@keyframes fade{
-  from{opacity:0}
-  to{opacity:1}
 }
 
-/* 헤더 */
-.header{
-  padding:20px;
-  font-weight:700;
+/* 버튼 */
+.btn{
+  background:var(--main);
+  border:none;
+  padding:16px;
+  border-radius:14px;
+  color:white;
+  font-weight:600;
 }
 
-/* 본문 */
-.body{
-  flex:1;
-  overflow:auto;
+/* 감정 카드 */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
   padding:20px;
 }
 
-/* 카드 */
 .card{
+  background:var(--light);
+  padding:20px;
+  border-radius:16px;
+  cursor:pointer;
+}
+
+.card.sel{
+  background:var(--main);
+  color:white;
+}
+
+/* 책 리스트 */
+.book{
+  padding:16px;
+  margin:10px;
   background:white;
-  padding:18px;
-  border-radius:20px;
-  margin-bottom:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-
-/* 캐릭터 */
-.character{
-  text-align:center;
-  font-size:50px;
-  margin-top:20px;
-  animation:float 2s infinite ease-in-out;
-}
-
-@keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
-  100%{transform:translateY(0)}
+  border-radius:12px;
+  cursor:pointer;
 }
 
 /* 채팅 */
@@ -76,202 +74,164 @@ body{
   flex:1;
   overflow:auto;
   padding:20px;
-  padding-bottom:140px;
 }
 
 .msg{
-  margin-bottom:10px;
-  max-width:75%;
+  margin-bottom:12px;
 }
 
-.bot{
-  background:white;
-  padding:12px;
-  border-radius:14px;
-}
-
-.user{
-  background:var(--main);
-  color:white;
-  padding:12px;
-  border-radius:14px;
-  margin-left:auto;
-}
+.bot{color:#333}
+.user{text-align:right}
 
 /* 입력 */
 .inputbar{
   position:fixed;
   bottom:0;
   width:100%;
-  display:flex;
   padding:10px;
-  background:var(--bg);
+  padding-bottom:calc(var(--sab) + 10px);
+  background:white;
+  display:flex;
+  gap:10px;
 }
 
 input{
   flex:1;
   padding:12px;
-  border-radius:20px;
-  border:none;
-}
-
-.send{
-  background:var(--main);
-  color:white;
-  padding:12px;
-  border-radius:50%;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 감정 -->
-<div id="s1" class="screen active">
-  <div class="header">오늘 마음은 어떤 색이야?</div>
-
-  <div class="character">📖✨</div>
-
-  <div class="body">
-    <div class="card" onclick="pickEmotion('불안')">🌫 불안</div>
-    <div class="card" onclick="pickEmotion('외로움')">🌙 외로움</div>
-    <div class="card" onclick="pickEmotion('지침')">🍂 지침</div>
+<!-- S1 인보딩 -->
+<div class="screen active" id="s1">
+  <div style="margin:auto;text-align:center">
+    <h1>📖 책친구</h1>
+    <p>감정에 맞는 한 줄의 책</p>
+    <button class="btn" onclick="go(2)">시작하기</button>
   </div>
 </div>
 
-<!-- 공감 -->
-<div id="s2" class="screen">
-  <div class="header">책친구가 전하는 말</div>
-
-  <div class="character">📖🤍</div>
-
-  <div class="body">
-    <div id="empathy"></div>
-    <button onclick="goBooks()">책을 펼쳐볼까?</button>
+<!-- S2 감정 -->
+<div class="screen" id="s2">
+  <h2 style="padding:20px">오늘 기분은?</h2>
+  <div class="grid">
+    <div class="card" onclick="pick('찜찜')">🐣 찜찜</div>
+    <div class="card" onclick="pick('지침')">🫣 지침</div>
+    <div class="card" onclick="pick('말못함')">💬 말못함</div>
+    <div class="card" onclick="pick('피곤')">😪 피곤</div>
   </div>
 </div>
 
-<!-- 책 -->
-<div id="s3" class="screen">
-  <div class="header">오늘의 책</div>
-  <div class="body" id="bookList"></div>
+<!-- S3 책 리스트 -->
+<div class="screen" id="s3">
+  <h2 style="padding:20px">추천 책</h2>
+  <div id="books"></div>
 </div>
 
-<!-- 문장 -->
-<div id="s4" class="screen">
-  <div class="header">책의 한마디</div>
-  <div class="body">
-    <div id="quoteBox"></div>
-    <button onclick="goChat()">이야기 나누기</button>
+<!-- S4 편지 -->
+<div class="screen" id="s4">
+  <div style="padding:20px">
+    <h3 id="bookTitle"></h3>
+    <p id="quote" style="font-size:18px;margin-top:20px"></p>
+
+    <button class="btn" onclick="startChat()">대화하기</button>
   </div>
 </div>
 
-<!-- 채팅 -->
-<div id="s5" class="screen">
-  <div class="header">책친구</div>
+<!-- S5 채팅 -->
+<div class="screen" id="s5">
   <div class="chat" id="chat"></div>
 
   <div class="inputbar">
     <input id="input">
-    <div class="send" onclick="send()">↑</div>
+    <button onclick="send()">↑</button>
   </div>
 </div>
 
 <script>
 
-/* 감정 공감 문장 */
-const EMPATHY = {
-  불안:'괜찮아, 지금 흔들리는 건 자연스러운 일이야.',
-  외로움:'혼자라고 느껴지는 순간도, 사실은 지나가는 과정이야.',
-  지침:'많이 애썼구나, 잠시 쉬어도 괜찮아.'
+/* 상태 */
+let emotion='';
+let book='';
+let quote='';
+
+/* 책 DB (확장 가능) */
+const DB={
+  찜찜:[
+    {t:"아몬드",q:"세상은 나 없이도 잘 돌아갔다."},
+    {t:"데미안",q:"새는 알을 깨고 나온다."}
+  ],
+  지침:[
+    {t:"어린왕자",q:"가장 중요한 것은 보이지 않는다."}
+  ],
+  말못함:[
+    {t:"82년생 김지영",q:"우리는 말하지 않은 것들로 가득하다."}
+  ],
+  피곤:[
+    {t:"모모",q:"시간은 생명이다."}
+  ]
 };
 
-/* 책 데이터 */
-const BOOKS = [
-  {title:'데미안', quote:'새는 알을 깨고 나온다.'},
-  {title:'어린왕자', quote:'가장 중요한 건 눈에 보이지 않아.'}
-];
-
-let emotion='';
-let selectedBook=null;
-
-/* 화면 */
-function show(id){
+/* 화면 이동 */
+function go(n){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.getElementById('s'+n).classList.add('active');
 }
 
 /* 감정 선택 */
-function pickEmotion(e){
+function pick(e){
   emotion=e;
-  document.getElementById('empathy').innerText=EMPATHY[e];
-  show('s2');
-}
-
-/* 책 */
-function goBooks(){
   renderBooks();
-  show('s3');
+  go(3);
 }
 
+/* 책 렌더링 */
 function renderBooks(){
-  const el=document.getElementById('bookList');
-  el.innerHTML='';
+  const wrap=document.getElementById('books');
+  wrap.innerHTML='';
 
-  BOOKS.forEach(b=>{
+  DB[emotion].forEach(b=>{
     const div=document.createElement('div');
-    div.className='card';
-    div.innerText=b.title;
-    div.onclick=()=>selectBook(b);
-    el.appendChild(div);
+    div.className='book';
+    div.innerHTML=`<b>${b.t}</b><br>${b.q}`;
+
+    div.onclick=()=>{
+      book=b.t;
+      quote=b.q;
+      document.getElementById('bookTitle').innerText=book;
+      document.getElementById('quote').innerText=quote;
+      go(4);
+    }
+
+    wrap.appendChild(div);
   });
 }
 
-/* 선택 */
-function selectBook(b){
-  selectedBook=b;
-
-  document.getElementById('quoteBox').innerHTML=`
-    <h2>${b.title}</h2>
-    <p>${b.quote}</p>
-  `;
-
-  show('s4');
-}
-
-/* 채팅 */
-function goChat(){
-  show('s5');
-
-  bot(`"${selectedBook.quote}"`);
-  bot('이 문장이 지금 너에게 어떤 의미로 느껴져?');
-}
-
-function append(type,text){
+/* 채팅 시작 */
+function startChat(){
+  go(5);
   const chat=document.getElementById('chat');
 
-  const div=document.createElement('div');
-  div.className='msg '+type;
-  div.innerText=text;
-
-  chat.appendChild(div);
-  chat.scrollTop=chat.scrollHeight;
+  chat.innerHTML+=`
+  <div class="msg bot">"${quote}"</div>
+  <div class="msg bot">이 문장에서 어떤 느낌 들었어?</div>
+  `;
 }
 
-function bot(t){append('bot',t);}
-function user(t){append('user',t);}
-
+/* 메시지 */
 function send(){
   const input=document.getElementById('input');
-  const msg=input.value;
-  if(!msg) return;
+  const chat=document.getElementById('chat');
 
-  user(msg);
+  chat.innerHTML+=`<div class="msg user">${input.value}</div>`;
   input.value='';
 
   setTimeout(()=>{
-    bot('그 감정을 조금 더 들려줄래?');
-  },400);
+    chat.innerHTML+=`<div class="msg bot">그 느낌, 조금 더 말해줄래?</div>`;
+    chat.scrollTop=chat.scrollHeight;
+  },500);
 }
 
 </script>
