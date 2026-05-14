@@ -328,20 +328,22 @@ document.addEventListener('DOMContentLoaded', () => {
 .nmitem{display:flex;align-items:center;gap:14px;padding:13px 22px;cursor:pointer;transition:background .15s}
 .nmitem:hover{background:var(--lb)}
 
-/* ══ BOTTOM NAV ══ */
+/* ══ BOTTOM NAV (푸터 전체 높이 축소) ══ */
 .bnav {
-    flex-shrink: 0; 
-    background: var(--cr); 
-    border-top: 1px solid var(--lb); 
+    flex-shrink: 0;
+    background: var(--cr);
+    border-top: 1px solid var(--lb);
     z-index: 50;
+    /* 하단 푸터를 고정시켜서 채팅창을 가리지 않게 합니다 */
+    position: relative; 
 }
 
 .bnav-row {
     display: flex;
     max-width: 480px;
     margin: 0 auto;
-    /* 상단 패딩은 줄이고, 아이폰 하단 홈바(var(--sab)) 여백은 유지합니다 */
-    padding: 6px 8px calc(var(--sab) + 6px); 
+    /* 패딩을 대폭 줄였습니다 (기존 12px -> 4px) */
+    padding: 4px 8px calc(var(--sab) + 4px); 
 }
 
 .bni {
@@ -349,22 +351,37 @@ document.addEventListener('DOMContentLoaded', () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px; /* 아이콘과 글자 사이 간격 축소 */
+    /* 아이콘과 글자 사이 간격을 최소화 (기존 4px -> 0px) */
+    gap: 0px; 
     cursor: pointer;
-    padding: 4px 0; /* 내부 여백 축소 */
+    padding: 2px 0;
     border-radius: 14px;
-    transition: background .15s;
 }
 
 .bni-ic {
-    font-size: 22px; /* 아이콘 크기를 살짝 줄여 여백 확보 */
+    font-size: 20px; /* 아이콘 크기를 살짝 줄임 */
     line-height: 1.1;
 }
 
 .bni-lb {
-    font-size: 10px; /* 라벨 폰트 크기 미세 조정 */
+    font-size: 9px; /* 라벨 폰트 크기 축소 */
     color: rgba(62,32,16,.38);
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+/* ══ CHAT AREA (가려짐 방지 핵심) ══ */
+#chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    /* 푸터가 가리는 만큼 '강제로' 바닥 여백을 줍니다. */
+    /* 120px 정도 주면 마지막 메시지가 푸터 위로 확실히 올라옵니다. */
+    padding-bottom: 140px !important; 
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    -webkit-overflow-scrolling: touch;
 }
 <!-- ═══ S1 · SPLASH ═══ -->
 <div class="screen active" id="s1" onclick="goTo(2)" style="background:var(--cr);align-items:center;justify-content:center;gap:18px;cursor:pointer">
