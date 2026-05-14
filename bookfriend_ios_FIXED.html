@@ -9,63 +9,96 @@
 body{
   margin:0;
   font-family:'Pretendard', sans-serif;
-  background:#F5EFE6;
+  background:#EFE7DC;
 }
 
-/* 앱 구조 */
-.app{
-  display:flex;
-  flex-direction:column;
-  height:100vh;
-}
-
-/* 온보딩 */
+/* ===== 온보딩 ===== */
 .onboarding{
   position:fixed;
   inset:0;
-  background:#7B4F2E;
+  background:#5A3E2B;
   color:#fff;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  z-index:10;
 }
 
-.onboarding h1{margin-bottom:10px;}
+.onboarding h1{
+  font-size:28px;
+  letter-spacing:2px;
+}
+
+.onboarding p{
+  opacity:0.8;
+}
+
 .onboarding button{
   margin-top:20px;
-  padding:10px 20px;
+  padding:12px 20px;
   border:none;
-  border-radius:10px;
-}
-
-/* 헤더 */
-.header{
-  padding:14px;
+  border-radius:20px;
   background:#D4A96A;
   color:#fff;
-  display:flex;
-  align-items:center;
-  gap:10px;
 }
 
-/* 캐릭터 */
-.character{
-  width:36px;
-  height:36px;
-  border-radius:8px;
+/* ===== 헤더 ===== */
+.header{
+  padding:16px;
+  background:#7B4F2E;
+  color:#fff;
+  font-weight:bold;
+}
+
+/* ===== 감정 카드 ===== */
+.emotions{
+  padding:20px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.emotion-card{
   background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
+  padding:20px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  cursor:pointer;
+  transition:0.2s;
 }
 
-/* 채팅 */
+.emotion-card:hover{
+  transform:translateY(-4px);
+}
+
+/* ===== 책 추천 ===== */
+.book-list{
+  padding:20px;
+}
+
+.book-card{
+  background:#fff;
+  padding:18px;
+  margin-bottom:12px;
+  border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  cursor:pointer;
+}
+
+.book-title{
+  font-weight:bold;
+}
+
+.book-preview{
+  font-size:13px;
+  color:#777;
+  margin-top:6px;
+}
+
+/* ===== 채팅 ===== */
 .chat{
-  flex:1;
-  overflow-y:auto;
+  height:calc(100vh - 140px);
+  overflow:auto;
   padding:16px;
   padding-bottom:120px;
 }
@@ -81,36 +114,26 @@ body{
   max-width:70%;
 }
 
-.user .bubble{background:#D4A96A;color:#fff;}
-.bot .bubble{background:#fff;color:#333;}
+.user .bubble{
+  background:#D4A96A;
+  color:#fff;
+}
 
-/* 책 카드 */
+.bot .bubble{
+  background:#fff;
+}
+
+/* ===== 책 문장 ===== */
 .quote-card{
   background:#fff;
-  padding:18px;
-  border-radius:18px;
-  margin-bottom:12px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  padding:20px;
+  border-radius:20px;
+  margin-bottom:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  font-style:italic;
 }
 
-.book{font-size:12px;color:#999;}
-.quote{margin-top:6px;}
-
-/* 감정 선택 */
-.emotions{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  padding:16px;
-}
-
-.emotions button{
-  padding:12px;
-  border:none;
-  border-radius:12px;
-}
-
-/* 입력 */
+/* ===== 입력 ===== */
 .footer{
   position:fixed;
   bottom:0;
@@ -118,7 +141,6 @@ body{
   background:#fff;
   display:flex;
   padding:10px;
-  gap:6px;
 }
 
 input{
@@ -129,23 +151,12 @@ input{
 }
 
 button{
+  margin-left:6px;
+  border:none;
   background:#7B4F2E;
   color:#fff;
-  border:none;
   border-radius:10px;
-}
-
-/* 보관함 */
-.archive{
-  position:fixed;
-  right:10px;
-  top:60px;
-  background:#fff;
   padding:10px;
-  border-radius:12px;
-  max-height:300px;
-  overflow:auto;
-  display:none;
 }
 </style>
 </head>
@@ -153,95 +164,93 @@ button{
 <body>
 
 <div class="onboarding" id="onboarding">
-  <h1>📖 책친구</h1>
-  <p>오늘의 나에게, 책이 먼저 말을 건넵니다</p>
+  <h1>책친구</h1>
+  <p>책의 한 문장이 당신에게 말을 건넵니다</p>
   <button onclick="startApp()">시작하기</button>
 </div>
 
-<div class="app">
+<div class="header">📖 책친구</div>
 
-<div class="header">
-  <div class="character">📖</div>
-  책친구
-  <button onclick="toggleArchive()">보관함</button>
-</div>
-
-<div class="chat" id="chat"></div>
-
+<!-- 감정 -->
 <div class="emotions" id="emotionBox">
-  <button onclick="start('불안')">불안</button>
-  <button onclick="start('외로움')">외로움</button>
-  <button onclick="start('후회')">후회</button>
-  <button onclick="start('자존감')">자존감</button>
-  <button onclick="start('미래')">미래</button>
-  <button onclick="start('관계')">관계</button>
+  <div class="emotion-card" onclick="selectEmotion('불안')">불안</div>
+  <div class="emotion-card" onclick="selectEmotion('외로움')">외로움</div>
+  <div class="emotion-card" onclick="selectEmotion('후회')">후회</div>
+  <div class="emotion-card" onclick="selectEmotion('자존감')">자존감</div>
 </div>
+
+<!-- 책 추천 -->
+<div class="book-list" id="bookList" style="display:none;"></div>
+
+<!-- 채팅 -->
+<div class="chat" id="chat" style="display:none;"></div>
 
 <div class="footer">
   <input id="input" placeholder="생각을 적어보세요">
   <button onclick="send()">전송</button>
 </div>
 
-<div class="archive" id="archive"></div>
-
-</div>
-
 <script>
 
-/* ===== 데이터 (확장형) ===== */
-const QUOTES = {
-  불안:[], 외로움:[], 후회:[], 자존감:[], 미래:[], 관계:[]
+/* ===== 데이터 ===== */
+const BOOKS = {
+  불안:[
+    {title:"데미안", text:"새는 알을 깨고 나온다."},
+    {title:"어린왕자", text:"중요한 건 눈에 보이지 않아."},
+    {title:"월든", text:"나는 의도적으로 살기 위해 숲으로 갔다."}
+  ],
+  외로움:[
+    {title:"노르웨이의 숲", text:"사람은 결국 혼자야."},
+    {title:"자기 앞의 생", text:"그래도 사람은 서로 필요해."}
+  ],
+  후회:[
+    {title:"위대한 개츠비", text:"우리는 과거로 돌아가려 한다."}
+  ],
+  자존감:[
+    {title:"데미안", text:"나는 나로 존재한다."}
+  ]
 };
 
-/* 🔥 200개 자동 생성 */
-const baseBooks = ["어린왕자","데미안","월든","노인과 바다","죄와 벌","파우스트","변신","위대한 개츠비"];
-
-for(let i=0;i<200;i++){
-  const emoKeys = Object.keys(QUOTES);
-  const emo = emoKeys[i % emoKeys.length];
-
-  QUOTES[emo].push({
-    book: baseBooks[i % baseBooks.length],
-    text: "삶은 계속된다. " + (i+1)
-  });
-}
+let selectedBook = null;
 
 /* ===== 시작 ===== */
 function startApp(){
-  document.getElementById('onboarding').style.display='none';
+  onboarding.style.display='none';
 }
 
-/* ===== 감정 시작 ===== */
-let currentEmotion = '';
+/* ===== 감정 선택 ===== */
+function selectEmotion(emotion){
+  emotionBox.style.display='none';
 
-function start(emotion){
-  currentEmotion = emotion;
-  document.getElementById('emotionBox').style.display='none';
-  showQuote();
+  const list = BOOKS[emotion];
+  const el = document.getElementById('bookList');
+  el.style.display='block';
+
+  el.innerHTML = list.map(b=>`
+    <div class="book-card" onclick="chooseBook('${b.title}','${b.text}')">
+      <div class="book-title">${b.title}</div>
+      <div class="book-preview">${b.text}</div>
+    </div>
+  `).join('');
 }
 
-/* ===== 책 문장 ===== */
-function showQuote(){
-  const list = QUOTES[currentEmotion];
-  const pick = list[Math.floor(Math.random()*list.length)];
+/* ===== 책 선택 ===== */
+function chooseBook(title,text){
+  selectedBook = {title,text};
 
-  const chat = document.getElementById('chat');
+  bookList.style.display='none';
+  chat.style.display='block';
 
-  const div = document.createElement('div');
-  div.className='quote-card';
-  div.innerHTML=`
-    <div class="book">${pick.book}</div>
-    <div class="quote">"${pick.text}"</div>
+  chat.innerHTML += `
+    <div class="quote-card">
+      "${text}"<br><br><b>${title}</b>
+    </div>
   `;
-  chat.appendChild(div);
-  scroll();
 
-  setTimeout(()=>{
-    bot("이 문장에서 지금 가장 마음에 걸리는 부분은 어디야?");
-  },600);
+  bot("이 문장에서 가장 마음에 걸린 부분은 어디야?");
 }
 
-/* ===== 메시지 ===== */
+/* ===== 채팅 ===== */
 function user(msg){
   chat.innerHTML += `<div class="msg user"><div class="bubble">${msg}</div></div>`;
   scroll();
@@ -252,64 +261,16 @@ function bot(msg){
   scroll();
 }
 
-/* ===== 전송 ===== */
-let turn = 0;
-let memory = [];
-
 function send(){
-  const input = document.getElementById('input');
   const val = input.value.trim();
   if(!val) return;
 
   user(val);
-  memory.push(val);
   input.value='';
-  turn++;
-
-  if(turn > 5){
-    finish();
-    return;
-  }
 
   setTimeout(()=>{
-    const questions = [
-      "그 감정이 생긴 이유는 뭐라고 생각해?",
-      "그때 네가 진짜 하고 싶었던 말은?",
-      "다시 돌아간다면 다르게 할 수 있을까?",
-      "그 감정이 지금도 남아있는 이유는?",
-      "한 문장으로 정리해본다면?"
-    ];
-    bot(questions[turn-1]);
+    bot("그 감정을 한 문장으로 정리해볼 수 있을까?");
   },600);
-}
-
-/* ===== 저장 ===== */
-function finish(){
-  const data = {
-    date: new Date().toLocaleString(),
-    emotion: currentEmotion,
-    thought: memory.join("\n")
-  };
-
-  const arr = JSON.parse(localStorage.getItem('archive')||'[]');
-  arr.unshift(data);
-  localStorage.setItem('archive', JSON.stringify(arr));
-
-  bot("오늘의 생각을 보관함에 저장했어 🤍");
-}
-
-/* ===== 보관함 ===== */
-function toggleArchive(){
-  const el = document.getElementById('archive');
-  el.style.display = el.style.display==='block'?'none':'block';
-
-  const data = JSON.parse(localStorage.getItem('archive')||'[]');
-
-  el.innerHTML = data.map(d=>
-    `<div style="margin-bottom:10px;">
-      <b>${d.emotion}</b><br>${d.thought}
-    </div>`
-  ).join('');
 }
 
 /* ===== 스크롤 ===== */
