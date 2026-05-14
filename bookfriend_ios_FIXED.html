@@ -86,13 +86,13 @@ function prev() { if (c > 1) goTo(c - 1); }
 // 2. 채팅 메시지 생성
 function appendMsg(msg, type) {
     const chat = document.getElementById('chat');
-    // ... 메시지 추가 로직 ...
+    // ... 기존 메시지 추가 코드 ...
 
-    // 메시지 추가 후 스크롤 로직
+    // 메시지 추가 후 스크롤
     setTimeout(() => {
         chat.scrollTo({
-            // 마지막 메시지가 입력창에 가려지지 않도록 전체 높이보다 조금 더 아래로 보냄
-            top: chat.scrollHeight + 100, 
+            // scrollHeight보다 더 여유있게 내려서 가려짐을 방지
+            top: chat.scrollHeight + 200, 
             behavior: 'smooth'
         });
     }, 100);
@@ -328,56 +328,38 @@ document.addEventListener('DOMContentLoaded', () => {
 .nmitem{display:flex;align-items:center;gap:14px;padding:13px 22px;cursor:pointer;transition:background .15s}
 .nmitem:hover{background:var(--lb)}
 
-/* ══ BOTTOM NAV (푸터 전체 높이 축소) ══ */
-.bnav {
-    flex-shrink: 0;
-    background: var(--cr);
-    border-top: 1px solid var(--lb);
-    z-index: 50;
-    /* 하단 푸터를 고정시켜서 채팅창을 가리지 않게 합니다 */
-    position: relative; 
-}
-
+/* ══ BOTTOM NAV (전체 화면 공통 푸터) ══ */
 .bnav-row {
-    display: flex;
+    display: flex !important;
     max-width: 480px;
     margin: 0 auto;
-    /* 패딩을 대폭 줄였습니다 (기존 12px -> 4px) */
-    padding: 4px 8px calc(var(--sab) + 4px); 
+    /* 높이를 결정하는 패딩을 최소화합니다 */
+    padding-top: 4px !important;
+    padding-bottom: calc(var(--sab) + 4px) !important; 
+    height: auto !important; /* 높이를 자동 설정으로 변경 */
 }
 
 .bni {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* 아이콘과 글자 사이 간격을 최소화 (기존 4px -> 0px) */
-    gap: 0px; 
-    cursor: pointer;
-    padding: 2px 0;
-    border-radius: 14px;
+    padding: 2px 0 !important; /* 내부 여백 축소 */
+    gap: 0px !important; /* 아이콘과 글자 사이 간격 제거 */
 }
 
-.bni-ic {
-    font-size: 20px; /* 아이콘 크기를 살짝 줄임 */
-    line-height: 1.1;
+/* ══ S9 채팅 화면 전용 입력창 (채팅창 내부 푸터) ══ */
+/* 만약 S9 화면 하단에 별도의 입력창이 있다면 이 부분을 수정해야 합니다 */
+.input-area {
+    padding: 8px 16px !important;
+    padding-bottom: calc(var(--sab) + 8px) !important;
+    background: var(--cr);
+    border-top: 1px solid var(--lb);
 }
 
-.bni-lb {
-    font-size: 9px; /* 라벨 폰트 크기 축소 */
-    color: rgba(62,32,16,.38);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-}
-
-/* ══ CHAT AREA (가려짐 방지 핵심) ══ */
+/* ══ CHAT AREA (메시지 가려짐 방지) ══ */
 #chat {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
-    /* 푸터가 가리는 만큼 '강제로' 바닥 여백을 줍니다. */
-    /* 120px 정도 주면 마지막 메시지가 푸터 위로 확실히 올라옵니다. */
-    padding-bottom: 140px !important; 
+    /* 중요: 푸터와 입력창의 높이를 합친 것보다 더 큰 여백을 아래에 줍니다 */
+    padding: 20px !important;
+    padding-bottom: 160px !important; 
     display: flex;
     flex-direction: column;
     gap: 14px;
