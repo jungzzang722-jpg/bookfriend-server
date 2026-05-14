@@ -64,7 +64,21 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:syste
 .ob-dots-dark{position:absolute;bottom:calc(var(--sab) + 52px);left:0;right:0;display:flex;justify-content:center;gap:7px;z-index:10}
 
 /* chat */
-.chatbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 20px 20px;display:flex;flex-direction:column;gap:16px}
+/* 채팅 메시지가 쌓이는 영역 */
+#chat {
+    flex: 1;                /* 헤더와 입력창 제외한 나머지 공간 다 차지 */
+    overflow-y: auto;       /* 내용이 많아지면 세로 스크롤 생성 */
+    -webkit-overflow-scrolling: touch; /* iOS에서 부드러운 스크롤 구현 (필수) */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 화면 전체가 들썩이지 않도록 고정 */
+.screen {
+    overflow: hidden;       /* 화면 전체는 스크롤되지 않게 막음 */
+}
 .chatbody::-webkit-scrollbar{display:none}
 .cmsg{max-width:84%}
 .cmsg.bot{align-self:flex-start}.cmsg.user{align-self:flex-end}
