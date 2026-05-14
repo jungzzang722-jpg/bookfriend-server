@@ -13,7 +13,19 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:syste
 :root{--cr:#F5EFE6;--bg:#D4A96A;--br:#7B4F2E;--dk:#3E2010;--lb:#EAD8BC;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
 
 .screens{position:fixed;inset:0;height:100dvh}
-.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;transform:translateX(26px);overflow:hidden;background:var(--cr);display:flex;flex-direction:columntouch-action:pan-y;}
+..screen{
+position:absolute;
+inset:0;
+opacity:0;
+pointer-events:none;
+transition:opacity .3s ease,transform .3s ease;
+transform:translateX(26px);
+overflow:hidden;
+background:var(--cr);
+display:flex;
+flex-direction:column;
+touch-action:pan-y;
+}
 .screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
 .screen.out{opacity:0;transform:translateX(-26px)}
 .cx{max-width:480px;width:100%;margin:0 auto}
@@ -64,13 +76,15 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:syste
 .ob-dots-dark{position:absolute;bottom:calc(var(--sab) + 52px);left:0;right:0;display:flex;justify-content:center;gap:7px;z-index:10}
 
 /* chat */
-..chatbody{
+/* chat */
+.chatbody{
   flex:1;
   min-height:0;
+
   overflow-y:auto;
   overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
 
+  -webkit-overflow-scrolling:touch;
   overscroll-behavior:contain;
   touch-action:pan-y;
 
