@@ -86,16 +86,16 @@ function prev() { if (c > 1) goTo(c - 1); }
 // 2. 채팅 메시지 생성
 function appendMsg(msg, type) {
     const chat = document.getElementById('chat');
-    // ... 기존 메시지 추가 코드 ...
+    // ... 메시지 추가 코드 ...
 
-    // 메시지 추가 후 스크롤
     setTimeout(() => {
+        // scrollHeight에 250px을 더해서 푸터 위로 메시지를 강제로 끌어올립니다.
+        const scrollTarget = chat.scrollHeight + 250;
         chat.scrollTo({
-            // scrollHeight보다 더 여유있게 내려서 가려짐을 방지
-            top: chat.scrollHeight + 200, 
+            top: scrollTarget,
             behavior: 'smooth'
         });
-    }, 100);
+    }, 150);
 }
     const div = document.createElement('div');
     div.className = 'cmsg ' + type;
@@ -328,42 +328,43 @@ document.addEventListener('DOMContentLoaded', () => {
 .nmitem{display:flex;align-items:center;gap:14px;padding:13px 22px;cursor:pointer;transition:background .15s}
 .nmitem:hover{background:var(--lb)}
 
-/* ══ BOTTOM NAV (전체 화면 공통 푸터) ══ */
+/* ══ BOTTOM NAV (푸터) ══ */
+.bnav {
+    flex-shrink: 0;
+    background: var(--cr);
+    border-top: 1px solid var(--lb);
+    z-index: 100; /* 채팅창보다 무조건 위에 */
+    position: relative;
+}
+
 .bnav-row {
     display: flex !important;
     max-width: 480px;
     margin: 0 auto;
-    /* 높이를 결정하는 패딩을 최소화합니다 */
-    padding-top: 4px !important;
-    padding-bottom: calc(var(--sab) + 4px) !important; 
-    height: auto !important; /* 높이를 자동 설정으로 변경 */
+    /* 세로 길이를 결정하는 핵심: 12px에서 6px로 축소 */
+    padding: 6px 8px calc(var(--sab) + 6px) !important;
+    height: auto !important;
 }
 
-.bni {
-    padding: 2px 0 !important; /* 내부 여백 축소 */
-    gap: 0px !important; /* 아이콘과 글자 사이 간격 제거 */
-}
-
-/* ══ S9 채팅 화면 전용 입력창 (채팅창 내부 푸터) ══ */
-/* 만약 S9 화면 하단에 별도의 입력창이 있다면 이 부분을 수정해야 합니다 */
-.input-area {
-    padding: 8px 16px !important;
-    padding-bottom: calc(var(--sab) + 8px) !important;
-    background: var(--cr);
-    border-top: 1px solid var(--lb);
-}
-
-/* ══ CHAT AREA (메시지 가려짐 방지) ══ */
+/* ══ CHAT AREA (가려짐 방지 핵심) ══ */
 #chat {
     flex: 1;
     overflow-y: auto;
-    /* 중요: 푸터와 입력창의 높이를 합친 것보다 더 큰 여백을 아래에 줍니다 */
     padding: 20px !important;
-    padding-bottom: 160px !important; 
+    /* 아래 패딩을 '비정상적'으로 크게 줘보세요. 
+       이렇게 해도 가려진다면 브라우저 캐시 문제입니다. */
+    padding-bottom: 180px !important; 
     display: flex;
     flex-direction: column;
     gap: 14px;
     -webkit-overflow-scrolling: touch;
+}
+
+/* 채팅창 전용 입력 영역(S9 안에 있는 경우) */
+.input-area {
+    padding: 8px 16px !important;
+    padding-bottom: calc(var(--sab) + 8px) !important;
+    min-height: 60px !important;
 }
 <!-- ═══ S1 · SPLASH ═══ -->
 <div class="screen active" id="s1" onclick="goTo(2)" style="background:var(--cr);align-items:center;justify-content:center;gap:18px;cursor:pointer">
