@@ -3,7 +3,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>책친구 · COMPLETE EDITION</title>
 <style>
 /* =========================================================
@@ -554,7 +554,38 @@ LONG SAFE FILLER STYLES FOR FULL VERSION
 
 /* =========================================================
 END STYLE
-========================================================= */ </style>
+========================================================= */
+
+/* onboarding indicator redesign */
+.dots{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+margin-top:10px;
+}
+.dot{
+width:28px;
+height:4px;
+border-radius:999px;
+background:rgba(62,32,16,.12);
+transition:all .25s ease;
+}
+.dot.on{
+width:44px;
+background:var(--bg);
+}
+.dot-w{
+width:28px;
+height:4px;
+border-radius:999px;
+background:rgba(255,255,255,.2);
+transition:all .25s ease;
+}
+.dot-w.on{
+width:44px;
+background:var(--bg);
+} </style>
 
 </head>
 <body>
