@@ -131,9 +131,9 @@ function appendMsg(msg, type) {
         <div class="ctime">${nowTime()}</div>
         // appendMsg 함수 내부의 스크롤 코드 수정
 setTimeout(() => {
-    // scrollHeight에 50px 정도 여유를 더 주어 완전히 끝까지 밀어 올립니다.
+    // 100px 정도 더 여유 있게 내려서 툴바 위로 확실히 올립니다.
     chat.scrollTo({
-        top: chat.scrollHeight + 50, 
+        top: chat.scrollHeight + 100, 
         behavior: 'smooth'
     });
 }, 150);
