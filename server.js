@@ -1,10 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-const OpenAI = require("openai");
-
-require("dotenv").config();
+const path = require("path");
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
