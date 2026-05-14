@@ -3,12 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>책친구</title>
 <style>
-/* === [핵심1] 아이폰 하단바 대응 변수 설정 === */
+/* === 1. 아이폰 하단바 대응 변수 === */
 :root {
   --cr: #F5EFE6;
   --bg: #D4A96A;
@@ -16,69 +13,77 @@
   --dk: #3E2010;
   --lb: #EAD8BC;
   --sat: env(safe-area-inset-top, 0px);
-  --sab: env(safe-area-inset-bottom, 0px); /* 아이폰 홈바/툴바 높이 자동 감지 */
+  --sab: env(safe-area-inset-bottom, 0px);
 }
 
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-/* === [핵심2] 뷰포트 고정 (dvh 사용) === */
-html,body {
-  width:100%;
-  height:100%;
-  height:100dvh; /* 주소창이 변해도 꽉 차게 유지 */
-  overflow:hidden;
-  background:var(--cr);
-  font-family:system-ui,-apple-system,'Segoe UI',sans-serif;
+html, body {
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--cr);
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
-.screens{position:fixed;inset:0;height:100dvh}
-.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;transform:translateX(26px);overflow:hidden;background:var(--cr);display:flex;flex-direction:column}
-.screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
+/* === 2. 화면 전환 구조 (보존) === */
+.screens { position: fixed; inset: 0; height: 100dvh; }
+.screen {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease, transform .3s ease;
+  transform: translateX(20px);
+  overflow: hidden;
+  background: var(--cr);
+  display: flex;
+  flex-direction: column;
+}
+.screen.active { 
+  opacity: 1; 
+  pointer-events: all; 
+  transform: translateX(0); 
+}
 
-/* === [핵심3] 채팅창 스크롤 여백 보정 === */
+/* === 3. 채팅창 영역 (아이폰 오류 해결 핵심) === */
 .chatbody {
   flex: 1;
-  min-height: 0;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 14px 20px;
-  /* 입력창(100px) + 아이폰 바닥여백(sab) 만큼 패딩 부여 */
-  padding-bottom: calc(var(--sab) + 120px) !important; 
+  padding: 20px;
+  /* 아이폰 하단바 + 입력창 높이만큼 확실히 여백 */
+  padding-bottom: calc(var(--sab) + 120px) !important;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* === [핵심4] 입력창 위치 보정 === */
 .cinputbar {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: 1000;
   background: var(--cr);
   border-top: 1px solid var(--lb);
-  /* 아이폰 하단 바 영역만큼 띄우고 내부 여백 조절 */
+  /* 아이폰 하단바 위로 입력창 띄우기 */
   padding: 12px 20px calc(var(--sab) + 12px);
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
-/* 기존 메시지 스타일 유지 */
-.cmsg{max-width:84%;display:flex;flex-direction:column}
-.cmsg.bot{align-self:flex-start}
-.cmsg.user{align-self:flex-end}
-.cbubble{padding:14px 18px;border-radius:22px;font-size:15px;line-height:1.65;word-break:break-all}
-.cmsg.bot .cbubble{background:#fff;color:var(--dk);box-shadow:0 2px 10px rgba(62,32,16,0.06);border-bottom-left-radius:4px}
-.cmsg.user .cbubble{background:var(--bg);color:#fff;border-bottom-right-radius:4px}
-.ctime{font-size:11px;color:var(--br);opacity:.5;margin-top:5px}
-.cmsg.user .ctime{text-align:right}
-.cinput{flex:1;background:#fff;border:1.5px solid var(--lb);border-radius:26px;padding:12px 18px;font-size:15px;outline:none;transition:border-color .2s}
-.cinput:focus{border-color:var(--bg)}
-.csend{width:44px;height:44px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;flex-shrink:0}
-.ldot{width:6px;height:6px;border-radius:50%;background:var(--bg);animation:ldot 1.4s infinite}
-@keyframes ldot{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+/* 메시지 스타일 */
+.cmsg { max-width: 84%; display: flex; flex-direction: column; }
+.cmsg.bot { align-self: flex-start; }
+.cmsg.user { align-self: flex-end; }
+.cbubble { padding: 14px 18px; border-radius: 22px; font-size: 15px; line-height: 1.6; }
+.cmsg.bot .cbubble { background: #fff; color: var(--dk); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.cmsg.user .cbubble { background: var(--bg); color: #fff; }
+.cinput { flex: 1; background: #fff; border: 1.5px solid var(--lb); border-radius: 26px; padding: 12px 18px; font-size: 15px; outline: none; }
+.csend { width: 44px; height: 44px; background: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -86,96 +91,79 @@ html,body {
 <div class="screens">
     <div class="screen active" id="s1" onclick="goTo(2)">
         <div style="margin:auto; text-align:center;">
-            <h2 style="color:var(--br)">책친구</h2>
-            <p style="margin-top:10px; color:var(--dk); font-size:14px;">터치하여 시작</p>
+            <h1 style="color:var(--br); font-size: 24px;">책친구</h1>
+            <p style="margin-top:15px; color:var(--dk); font-size: 14px;">화면을 탭하여 대화를 시작하세요</p>
         </div>
     </div>
-    
+
     <div class="screen" id="s9">
-        <div style="padding:calc(var(--sat) + 14px) 20px 14px; background:#fff; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--lb)">
-            <div style="font-weight:700; color:var(--dk)">📖 책친구</div>
+        <div style="padding: calc(var(--sat) + 15px) 20px 15px; background:#fff; border-bottom:1px solid var(--lb); font-weight:700;">
+            📖 책친구
         </div>
         <div class="chatbody" id="chat">
+            <div class="cmsg bot">
+                <div class="cbubble">안녕하세요! 오늘 하루는 어떠셨나요?</div>
             </div>
+        </div>
         <div class="cinputbar">
-            <input type="text" class="cinput" id="chatInput" placeholder="메시지를 입력하세요..." onkeypress="if(event.keyCode==13) sendMessage()">
+            <input type="text" id="chatInput" class="cinput" placeholder="메시지를 입력하세요..." onkeypress="if(event.keyCode==13) sendMessage()">
             <div class="csend" onclick="sendMessage()">↑</div>
         </div>
     </div>
 </div>
 
 <script>
-/* === JS 최상단 설정 === */
+/* === 자바스크립트 로직 === */
 const SERVER_URL = "https://bookfriend-server.onrender.com";
-let c = 1; 
-let tsX = 0, tsY = 0;
-let chatTurn = 0;
+let c = 1;
 
-function nowTime(){
-  const d=new Date(); let h=d.getHours(); const m=String(d.getMinutes()).padStart(2,'0');
-  const ampm=h>=12?'오후':'오전'; h=h%12||12;
-  return `${ampm} ${h}:${m}`;
+function goTo(n) {
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('s' + n);
+    if(target) {
+        target.classList.add('active');
+        c = n;
+    }
 }
 
-function goTo(n){
-  const screens=document.querySelectorAll('.screen');
-  screens.forEach(s=>s.classList.remove('active'));
-  const target=document.getElementById('s'+n);
-  if(target){ target.classList.add('active'); c=n; }
+function appendMsg(msg, type) {
+    const chat = document.getElementById('chat');
+    if(!chat) return;
+
+    const div = document.createElement('div');
+    div.className = 'cmsg ' + type;
+    div.innerHTML = `<div class="cbubble">${msg}</div>`;
+    chat.appendChild(div);
+
+    // 아이폰 툴바 간섭을 피하기 위한 스크롤 보정
+    setTimeout(() => {
+        chat.scrollTo({ top: chat.scrollHeight + 100, behavior: 'smooth' });
+    }, 100);
 }
 
-/* === [핵심5] 메시지 추가 후 스크롤 로직 수정 === */
-function appendMsg(msg,type){
-  const chat=document.getElementById('chat');
-  if(!chat)return;
-  const div=document.createElement('div');
-  div.className='cmsg '+type;
-  div.innerHTML=`<div class="cbubble">${msg.replace(/\n/g,'<br>')}</div><div class="ctime">${nowTime()}</div>`;
-  chat.appendChild(div);
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if(!msg) return;
 
-  // 아이폰 툴바 위로 확실히 보일 수 있도록 충분한 여유 스크롤 부여
-  setTimeout(() => {
-    chat.scrollTo({
-      top: chat.scrollHeight + 100, 
-      behavior: 'smooth'
-    });
-  }, 100);
+    appendMsg(msg, 'user');
+    input.value = '';
+
+    try {
+        const res = await fetch(SERVER_URL + '/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        appendMsg(data.reply, 'bot');
+    } catch(e) {
+        appendMsg("연결이 잠시 불안정해요. 🤍", "bot");
+    }
 }
 
-function showTyping(){
-  const chat=document.getElementById('chat');
-  const div=document.createElement('div');
-  div.className='cmsg bot'; div.id='typing';
-  div.innerHTML='<div class="cbubble" style="padding:14px 18px"><div style="display:flex;gap:6px;align-items:center"><div class="ldot"></div><div class="ldot" style="animation-delay:.2s"></div><div class="ldot" style="animation-delay:.4s"></div></div></div>';
-  chat.appendChild(div);
-  chat.scrollTop=chat.scrollHeight;
-}
-
-function hideTyping(){ const t=document.getElementById('typing'); if(t)t.remove(); }
-
-async function sendMessage(){
-  const input=document.getElementById('chatInput');
-  const msg=input.value.trim();
-  if(!msg)return;
-  appendMsg(msg,'user');
-  input.value='';
-  showTyping();
-  try{
-    const res=await fetch(SERVER_URL+'/chat',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:msg})
-    });
-    const data=await res.json();
-    hideTyping();
-    appendMsg(data.reply,'bot');
-  }catch(e){
-    hideTyping();
-    appendMsg('잠깐, 연결이 원활하지 않아요. 🤍','bot');
-  }
-}
-
-// 초기 전환 (필요 시)
+// 2.5초 후 자동 시작 (테스트용)
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => { if(c === 1) goTo(2); }, 2500);
 });
