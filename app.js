@@ -1,91 +1,3 @@
-const input = document.getElementById("chatInput");
-const sendBtn = document.getElementById("sendBtn");
-const chat = document.getElementById("chat");
-
-const SERVER_URL = "https://bookfriend-server.onrender.com//chat";
-
-async function sendMessage() {
-  const text = input.value.trim();
-
-  if (!text) return;
-
-  // 유저 메시지 추가
-  addMessage(text, "user");
-
-  input.value = "";
-
-  // 로딩 메시지
-  const loading = addLoading();
-
-  try {
-    const res = await fetch(SERVER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message: text,
-      }),
-    });
-
-    const data = await res.json();
-
-    loading.remove();
-
-    addMessage(data.reply, "bot");
-
-  } catch (err) {
-    loading.remove();
-
-    addMessage(
-      "지금 책친구가 잠시 쉬고 있어... 😢",
-      "bot"
-    );
-
-    console.error(err);
-  }
-}
-
-function addMessage(text, type) {
-  const wrap = document.createElement("div");
-  wrap.className = `cmsg ${type}`;
-
-  wrap.innerHTML = `
-    <div class="cbubble">${text}</div>
-  `;
-
-  chat.appendChild(wrap);
-
-  chat.scrollTop = chat.scrollHeight;
-
-  return wrap;
-}
-
-function addLoading() {
-  const wrap = document.createElement("div");
-
-  wrap.className = "cmsg bot";
-
-  wrap.innerHTML = `
-    <div class="cbubble">
-      책친구가 생각 중이야...
-    </div>
-  `;
-
-  chat.appendChild(wrap);
-
-  chat.scrollTop = chat.scrollHeight;
-
-  return wrap;
-}
-
-sendBtn.addEventListener("click", sendMessage);
-
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") {
-    sendMessage();
-  }
-});
 const emotionData = {
   찜찜: {
     emoji: "🐣",
@@ -163,10 +75,6 @@ function quickEmotion(emotion){
       data.comment;
   }
 
-  // 화면 이동
+  // 화면 이동 (goTo(22) 내부에서 2.2초 후 S8로 자동 이동)
   goTo(22);
-
-  setTimeout(()=>{
-    goTo(8);
-  },2200);
 }
