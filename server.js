@@ -42,6 +42,33 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+function startAutoArchive(lastInsight) {
+  // 1. 입력창 비활성화 (더 이상 입력 못 하게)
+  document.getElementById('chatInput').disabled = true;
+
+  // 2. 시각적인 안내 메시지 (디자인 톤에 맞춘 감성적인 멘트)
+  setTimeout(() => {
+    appendMsg("오늘 대화 속에서 소중한 문장들을 발견했어요. 당신의 보관함에 기록해둘게요. 🤍", 'bot');
+    
+    // 3. 실제 데이터 저장 로직 (이후 보관함 S11에서 보여줄 수 있도록)
+    // 예: localStorage에 저장하거나 전역 배열에 push
+    const newRecord = {
+      date: new Date().toLocaleDateString(),
+      insight: lastInsight,
+      // 여기에 현재 대화중인 책 정보가 있다면 함께 저장
+    };
+    
+    // 4. 잠시 후 보관함(S11)으로 이동
+    setTimeout(() => {
+      // 대화 카운트 초기화 후 이동
+      chatTurn = 0;
+      document.getElementById('chatInput').disabled = false;
+      goTo(11); // 보관함 화면으로 이동
+    }, 2500); // 사용자가 메시지를 읽을 시간을 줌
+    
+  }, 1500);
+}
+
 
 /*
 ========================================
