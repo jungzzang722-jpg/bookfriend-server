@@ -14,6 +14,7 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:syste
 
 .screens{position:fixed;inset:0;height:100dvh}
 .screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;transform:translateX(26px);overflow:hidden;background:var(--cr);display:flex;flex-direction:column}
+touch-action:pan-y;
 .screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
 .screen.out{opacity:0;transform:translateX(-26px)}
 .cx{max-width:480px;width:100%;margin:0 auto}
@@ -64,19 +65,22 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:syste
 .ob-dots-dark{position:absolute;bottom:calc(var(--sab) + 52px);left:0;right:0;display:flex;justify-content:center;gap:7px;z-index:10}
 
 /* chat */
-.chatbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 20px 20px;display:flex;flex-direction:column;gap:16px}
-.chatbody::-webkit-scrollbar{display:none}
-.cmsg{max-width:84%}
-.cmsg.bot{align-self:flex-start}.cmsg.user{align-self:flex-end}
-.cbubble{padding:15px 18px;border-radius:20px;font-size:15px;line-height:1.72}
-.cmsg.bot .cbubble{background:#fff;color:var(--dk);box-shadow:0 1px 8px rgba(62,32,16,.07)}
-.cmsg.user .cbubble{background:var(--bg);color:#fff}
-.ctime{font-size:11px;color:var(--br);opacity:.4;margin-top:5px;padding:0 2px}
-.cmsg.user .ctime{text-align:right}
-.cinputbar{position:absolute;bottom:0;left:0;right:0;padding:12px 20px calc(var(--sab) + 16px);background:var(--cr);border-top:1px solid var(--lb);display:flex;gap:10px;align-items:center}
-.cinput{flex:1;background:#fff;border-radius:26px;padding:14px 18px;font-size:15px;color:var(--dk);border:1.5px solid var(--lb);outline:none;font-family:inherit}
-.csend{width:46px;height:46px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff;flex-shrink:0}
+..chatbody{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
 
+  overscroll-behavior:contain;
+  touch-action:pan-y;
+
+  padding:14px 20px 120px;
+
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
 /* guide questions bubble */
 .cguide{background:rgba(212,169,106,.14);border:1px solid rgba(212,169,106,.3);border-radius:16px;padding:13px 16px;font-size:13px;color:var(--br);line-height:1.65;font-style:italic;margin-top:2px}
 
