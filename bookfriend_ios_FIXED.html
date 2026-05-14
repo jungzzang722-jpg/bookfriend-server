@@ -8,6 +8,7 @@
 <meta http-equiv="Expires" content="0">
 <title>책친구</title>
 <style>
+/* === 기초 레이아웃 === */
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}
 :root{--cr:#F5EFE6;--bg:#D4A96A;--br:#7B4F2E;--dk:#3E2010;--lb:#EAD8BC;--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
@@ -15,54 +16,176 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;font-family:syste
 .screens{position:fixed;inset:0;height:100dvh}
 .screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;transform:translateX(26px);overflow:hidden;background:var(--cr);display:flex;flex-direction:column}
 .screen.active{opacity:1;pointer-events:all;transform:translateX(0)}
-.screen.out{opacity:0;transform:translateX(-26px)}
-.cx{max-width:480px;width:100%;margin:0 auto}
 
-.ind{display:none}
-.snav{display:none}
+/* === 채팅창 하단 가려짐 방지 레이아웃 (수정) === */
+.chatbody {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    /* 입력창이 absolute로 떠 있으므로 그 높이만큼 여백 확보 */
+    padding-bottom: 120px !important; 
+}
 
-.btn{width:100%;padding:18px;background:var(--bg);color:var(--dk);border:none;border-radius:18px;font-size:17px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:.2px;transition:background .18s,transform .1s}
-.btn:hover{background:#c49858}.btn:active{transform:scale(.98)}
-.btn.ghost{background:transparent;color:var(--br);border:1.5px solid var(--lb)}
+.cinputbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--cr);
+    border-top: 1px solid var(--lb);
+    padding: 12px 20px calc(var(--sab) + 16px);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 
-.body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overflow-x:hidden}.body::-webkit-scrollbar{width:3px}
-.body::-webkit-scrollbar-thumb{background:var(--lb);border-radius:2px}
+/* === 말풍선 스타일 === */
+.cmsg { max-width: 84%; display: flex; flex-direction: column; }
+.cmsg.bot { align-self: flex-start; }
+.cmsg.user { align-self: flex-end; }
+.cbubble { padding: 14px 18px; border-radius: 22px; font-size: 15px; line-height: 1.65; word-break: break-all; }
+.cmsg.bot .cbubble { background: #fff; color: var(--dk); box-shadow: 0 2px 10px rgba(62,32,16,0.06); border-bottom-left-radius: 4px; }
+.cmsg.user .cbubble { background: var(--bg); color: #fff; border-bottom-right-radius: 4px; }
+.ctime { font-size: 11px; color: var(--br); opacity: 0.5; margin-top: 5px; }
+.cmsg.user .ctime { text-align: right; }
 
-.back{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--br);cursor:pointer;transition:background .15s;flex-shrink:0}
-.back:hover{background:var(--lb)}
+.cinput { flex: 1; background: #fff; border: 1.5px solid var(--lb); border-radius: 26px; padding: 12px 18px; font-size: 15px; outline: none; transition: border-color 0.2s; }
+.cinput:focus { border-color: var(--bg); }
+.csend { width: 44px; height: 44px; background: var(--bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; cursor: pointer; flex-shrink: 0; }
 
-.egrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.ecard{background:var(--lb);border-radius:20px;padding:18px;cursor:pointer;transition:transform .15s,background .15s;display:flex;flex-direction:column;justify-content:flex-end;min-height:118px}
-.ecard:hover{transform:scale(.97)}.ecard.blank{background:rgba(212,169,106,.12);border:2px dashed var(--bg)}
-.ecard.sel{background:var(--bg)}.ecard.sel .ecard-text{color:#fff}
-.ecard-icon{font-size:28px;line-height:1;margin-bottom:auto}
-.ecard-text{font-size:13.5px;font-weight:500;color:var(--dk);line-height:1.52;padding-top:10px}
-.ecard.blank .ecard-text{text-align:center}
+/* 로딩 애니메이션 */
+.ldot { width: 6px; height: 6px; border-radius: 50%; background: var(--bg); animation: ldot 1.4s infinite; }
+@keyframes ldot { 0%, 100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.1); } }
+</style>
+</head>
+<body>
 
-.lcard{background:#fff;border-radius:22px;padding:26px 24px;box-shadow:0 2px 20px rgba(62,32,16,.08)}
-.lmeta{font-size:12px;color:var(--br);opacity:.7;font-style:italic;margin-bottom:12px}
-.lquote{font-size:18px;font-weight:600;color:var(--dk);line-height:1.78;margin-bottom:18px}
-.ldivider{height:1px;background:var(--lb);margin-bottom:16px}
-.lcomment{font-size:14.5px;color:var(--br);line-height:1.72}
+<div class="screens">
+    <div class="screen active" id="s9">
+        <div style="padding: calc(var(--sat) + 14px) 20px 14px; background:#fff; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--lb)">
+            <div style="font-weight:700; color:var(--dk)">📖 책친구</div>
+        </div>
+        
+        <div class="chatbody" id="chat">
+            <div class="cmsg bot">
+                <div class="cbubble">안녕하세요! 오늘 마음 속에 남은 문장이 있나요?</div>
+                <div class="ctime">오후 2:15</div>
+            </div>
+        </div>
 
-.chip{display:inline-flex;align-items:center;gap:5px;background:var(--lb);color:var(--br);padding:8px 16px;border-radius:22px;font-size:13.5px;font-weight:500}
+        <div class="cinputbar">
+            <input type="text" class="cinput" id="chatInput" placeholder="메시지를 입력하세요..." onkeypress="if(event.keyCode==13) sendMessage()">
+            <div class="csend" onclick="sendMessage()">↑</div>
+        </div>
+    </div>
+</div>
 
-.dots{display:flex;justify-content:center;gap:7px}
-.dot{width:6px;height:6px;border-radius:3px;background:rgba(62,32,16,.15);transition:all .3s}
-.dot.on{width:20px;background:var(--bg)}
-.dot-w{width:6px;height:6px;border-radius:3px;background:rgba(212,169,106,.3);transition:all .3s}
-.dot-w.on{width:20px;background:var(--bg)}
+<script>
+/* === JS 최상단 설정 === */
+let c = 9; // 현재 화면 번호
+let tsX = 0, tsY = 0; // 터치 좌표
+let chatTurn = 0; // 대화 턴
 
-.obwrap{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:50px 30px calc(var(--sab) + 78px);cursor:pointer}
-.obbg{position:absolute;inset:0}
-.obov{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,3,1,.93) 0%,rgba(8,3,1,.12) 65%,transparent 100%)}
-.obc{position:relative;z-index:1;max-width:480px;width:100%;margin:0 auto}
-.oblabel{font-size:10.5px;color:var(--bg);opacity:.68;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:12px}
-.obtext{font-size:22px;font-weight:500;color:var(--bg);line-height:1.68;font-style:italic}
-.obtext.B{font-style:normal;font-weight:700;font-size:30px;line-height:1.3}
-.ob-hint{position:absolute;bottom:calc(var(--sab) + 30px);left:0;right:0;text-align:center;font-size:11px;color:rgba(212,169,106,.45);letter-spacing:.5px;z-index:10}
-.ob-dots-dark{position:absolute;bottom:calc(var(--sab) + 52px);left:0;right:0;display:flex;justify-content:center;gap:7px;z-index:10}
+// 전달해주신 서버 주소 적용
+const SERVER_URL = "https://bookfriend-server.onrender.com";
 
+function nowTime() {
+    const d = new Date();
+    let h = d.getHours();
+    const m = String(d.getMinutes()).padStart(2, '0');
+    const ampm = h >= 12 ? '오후' : '오전';
+    h = h % 12 || 12;
+    return `${ampm} ${h}:${m}`;
+}
+
+/* === 채팅 메시지 생성 (오류 수정 통합본) === */
+function appendMsg(msg, type) {
+    const chat = document.getElementById('chat');
+    if(!chat) return;
+
+    const div = document.createElement('div');
+    div.className = 'cmsg ' + type;
+    div.innerHTML = `
+        <div class="cbubble">${msg.replace(/\n/g, '<br>')}</div>
+        <div class="ctime">${nowTime()}</div>
+    `;
+    chat.appendChild(div);
+
+    // 스크롤을 맨 아래로 이동
+    setTimeout(() => {
+        chat.scrollTo({
+            top: chat.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, 100);
+}
+
+function showTyping() {
+    const chat = document.getElementById('chat');
+    const div = document.createElement('div');
+    div.className = 'cmsg bot';
+    div.id = 'typing';
+    div.innerHTML = `
+        <div class="cbubble" style="padding:14px 18px">
+            <div style="display:flex;gap:6px;align-items:center">
+                <div class="ldot"></div>
+                <div class="ldot" style="animation-delay:.2s"></div>
+                <div class="ldot" style="animation-delay:.4s"></div>
+            </div>
+        </div>`;
+    chat.appendChild(div);
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function hideTyping() {
+    const t = document.getElementById('typing');
+    if (t) t.remove();
+}
+
+/* === 메시지 전송 로직 === */
+async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    appendMsg(msg, 'user');
+    input.value = '';
+    showTyping();
+
+    try {
+        const res = await fetch(SERVER_URL + '/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg })
+        });
+        const data = await res.json();
+        hideTyping();
+        appendMsg(data.reply, 'bot');
+        
+        chatTurn++;
+        // 필요 시 chatTurn에 따른 자동 저장(Archive) 로직 추가 가능
+    } catch (e) {
+        hideTyping();
+        appendMsg('잠깐, 연결이 원활하지 않아요. 다시 시도해볼까요? 🤍', 'bot');
+    }
+}
+
+/* === 화면 전환 함수 === */
+function goTo(n) {
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(s => s.classList.remove('active'));
+    const target = document.getElementById('s' + n);
+    if(target) {
+        target.classList.add('active');
+        c = n;
+    }
+}
 /* chat */
 .chatbody{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 20px 20px;display:flex;flex-direction:column;gap:16px}
 .chatbody::-webkit-scrollbar{display:none}
