@@ -74,7 +74,7 @@ transform:translateX(-18px);
 
 .cx{
 width:100%;
-max-width:480px;
+max-width:100%;
 margin:0 auto;
 }
 
@@ -223,10 +223,29 @@ color:var(--brown);
 .chatbody{
 flex:1;
 overflow-y:auto;
-padding:18px 18px 120px;
+overflow-x:hidden;
+-webkit-overflow-scrolling:touch;
+padding:22px 14px 150px;
 display:flex;
 flex-direction:column;
-gap:14px;
+gap:18px;
+width:100%;
+max-width:100%;
+min-height:0;
+}
+
+.chatbody .cmsg{
+width:100%;
+display:flex;
+flex-direction:column;
+}
+
+.chatbody .cmsg.bot{
+align-items:flex-start;
+}
+
+.chatbody .cmsg.user{
+align-items:flex-end;
 }
 
 .cmsg{
@@ -239,23 +258,29 @@ align-items:flex-end;
 }
 
 .cbubble{
-max-width:82%;
-padding:14px 16px;
-border-radius:18px;
+max-width:92%;
+width:fit-content;
+padding:16px 18px;
+border-radius:20px;
 font-size:14px;
-line-height:1.75;
+line-height:1.8;
 background:#fff;
-box-shadow:var(--shadow);
+color:var(--dark);
+box-shadow:0 4px 18px rgba(62,32,16,.08);
+word-break:break-word;
+white-space:pre-wrap;
 }
 
 .cmsg.user .cbubble{
 background:var(--primary);
 color:#fff;
-border-radius:18px 18px 4px 18px;
+border-radius:20px 20px 6px 20px;
 }
 
 .cmsg.bot .cbubble{
-border-radius:18px 18px 18px 4px;
+background:#fff;
+color:var(--dark);
+border-radius:20px 20px 20px 6px;
 }
 
 .ctime{
@@ -269,18 +294,23 @@ position:absolute;
 bottom:0;
 left:0;
 right:0;
-background:linear-gradient(to top,var(--bg) 80%,transparent);
-padding:16px 18px calc(var(--safeBottom) + 22px);
+width:100%;
+max-width:100%;
+background:linear-gradient(to top,var(--bg) 82%,transparent);
+padding:18px 14px calc(var(--safeBottom) + 24px);
+z-index:30;
 }
 
 .cinput-wrap{
+width:100%;
 background:#fff;
-border-radius:22px;
-padding:10px;
+border-radius:24px;
+padding:12px 14px;
 display:flex;
-gap:10px;
+gap:12px;
 align-items:center;
-box-shadow:var(--shadow);
+box-shadow:0 6px 24px rgba(62,32,16,.1);
+min-height:64px;
 }
 
 .cinput{
@@ -311,7 +341,7 @@ border-top:1px solid var(--line);
 }
 
 .bnav-row{
-max-width:480px;
+max-width:100%;
 margin:0 auto;
 display:flex;
 padding:12px 8px calc(var(--safeBottom) + 12px);
