@@ -234,41 +234,39 @@ document.addEventListener('DOMContentLoaded', () => {
     flex: 1;
     overflow-y: auto;
     padding: 20px;
-    /* 하단 입력창 높이를 고려해 여백을 넉넉히 줍니다 */
-    padding-bottom: 120px; 
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    -webkit-overflow-scrolling: touch;
+    /* flex 구조가 잘 잡혀있다면 엄청나게 큰 padding-bottom이 필요 없습니다. */
+    /* 마지막 말풍선 아래의 적당한 여백만 주면 됩니다. */
+    padding-bottom: 20px; 
+}
+
+/* 하단 입력창은 절대 영역을 차지 (flex-shrink: 0) */
+.cinputbar, .bnav {
+    flex-shrink: 0; 
+    /* position: absolute; <- 이 속성을 제거해 보세요! */
+    background: var(--cr);
+    z-index: 100;
 }
 
 /* 하단 입력창(footer) 영역이 너무 크다면 높이를 고정하세요 */
 .input-area {
-    height: 80px; /* 적절한 높이로 고정 */
+    min-height: 60px; /* height 고정 대신 min-height 사용 권장 */
     background: var(--cr);
-    padding: 10px 20px;
-    padding-bottom: calc(10px + var(--sab)); /* 아이폰 하단 홈바 대응 */
+    padding: 8px 16px; 
+    padding-bottom: calc(var(--sab) + 8px); /* 하단 홈바 대응 */
     display: flex;
     align-items: center;
     gap: 10px;
     border-top: 1px solid rgba(0,0,0,0.05);
 }
-
 /* 화면 전체가 들썩이지 않도록 고정 */
+/* 화면 전체 래퍼 (예: body 또는 .screen) */
 .screen {
-    overflow: hidden;       /* 화면 전체는 스크롤되지 않게 막음 */
+    display: flex;
+    flex-direction: column;
+    height: 100dvh; /* 모바일 브라우저 상하단 바를 제외한 실제 화면 높이 */
+    overflow: hidden;
 }
-.chatbody::-webkit-scrollbar{display:none}
-.cmsg{max-width:84%}
-.cmsg.bot{align-self:flex-start}.cmsg.user{align-self:flex-end}
-.cbubble{padding:15px 18px;border-radius:20px;font-size:15px;line-height:1.72}
-.cmsg.bot .cbubble{background:#fff;color:var(--dk);box-shadow:0 1px 8px rgba(62,32,16,.07)}
-.cmsg.user .cbubble{background:var(--bg);color:#fff}
-.ctime{font-size:11px;color:var(--br);opacity:.4;margin-top:5px;padding:0 2px}
-.cmsg.user .ctime{text-align:right}
-.cinputbar{position:absolute;bottom:0;left:0;right:0;padding:12px 20px calc(var(--sab) + 16px);background:var(--cr);border-top:1px solid var(--lb);display:flex;gap:10px;align-items:center}
-.cinput{flex:1;background:#fff;border-radius:26px;padding:14px 18px;font-size:15px;color:var(--dk);border:1.5px solid var(--lb);outline:none;font-family:inherit}
-.csend{width:46px;height:46px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:#fff;flex-shrink:0}
+
 
 /* guide questions bubble */
 .cguide{background:rgba(212,169,106,.14);border:1px solid rgba(212,169,106,.3);border-radius:16px;padding:13px 16px;font-size:13px;color:var(--br);line-height:1.65;font-style:italic;margin-top:2px}
