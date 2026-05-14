@@ -3,281 +3,275 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>책친구</title>
 
 <style>
+:root{
+  --bg:#F4EFE8;
+  --main:#D8B384;
+  --dark:#2F1B0F;
+}
+
 body{
   margin:0;
-  font-family:'Pretendard', sans-serif;
-  background:#EFE7DC;
+  font-family:-apple-system, sans-serif;
+  background:linear-gradient(#F4EFE8,#EAD8BC);
+  overflow:hidden;
 }
 
-/* ===== 온보딩 ===== */
-.onboarding{
-  position:fixed;
+/* 화면 */
+.screen{
+  position:absolute;
   inset:0;
-  background:#5A3E2B;
-  color:#fff;
-  display:flex;
+  display:none;
   flex-direction:column;
-  justify-content:center;
-  align-items:center;
+  animation:fade .5s;
+}
+.screen.active{display:flex;}
+
+@keyframes fade{
+  from{opacity:0}
+  to{opacity:1}
 }
 
-.onboarding h1{
-  font-size:28px;
-  letter-spacing:2px;
-}
-
-.onboarding p{
-  opacity:0.8;
-}
-
-.onboarding button{
-  margin-top:20px;
-  padding:12px 20px;
-  border:none;
-  border-radius:20px;
-  background:#D4A96A;
-  color:#fff;
-}
-
-/* ===== 헤더 ===== */
+/* 헤더 */
 .header{
-  padding:16px;
-  background:#7B4F2E;
-  color:#fff;
-  font-weight:bold;
-}
-
-/* ===== 감정 카드 ===== */
-.emotions{
   padding:20px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
+  font-weight:700;
 }
 
-.emotion-card{
-  background:#fff;
-  padding:20px;
-  border-radius:20px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.emotion-card:hover{
-  transform:translateY(-4px);
-}
-
-/* ===== 책 추천 ===== */
-.book-list{
-  padding:20px;
-}
-
-.book-card{
-  background:#fff;
-  padding:18px;
-  margin-bottom:12px;
-  border-radius:16px;
-  box-shadow:0 6px 20px rgba(0,0,0,0.08);
-  cursor:pointer;
-}
-
-.book-title{
-  font-weight:bold;
-}
-
-.book-preview{
-  font-size:13px;
-  color:#777;
-  margin-top:6px;
-}
-
-/* ===== 채팅 ===== */
-.chat{
-  height:calc(100vh - 140px);
+/* 본문 */
+.body{
+  flex:1;
   overflow:auto;
-  padding:16px;
-  padding-bottom:120px;
-}
-
-.msg{margin-bottom:10px;}
-.user{text-align:right;}
-.bot{text-align:left;}
-
-.bubble{
-  display:inline-block;
-  padding:12px;
-  border-radius:16px;
-  max-width:70%;
-}
-
-.user .bubble{
-  background:#D4A96A;
-  color:#fff;
-}
-
-.bot .bubble{
-  background:#fff;
-}
-
-/* ===== 책 문장 ===== */
-.quote-card{
-  background:#fff;
   padding:20px;
-  border-radius:20px;
-  margin-bottom:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.1);
-  font-style:italic;
 }
 
-/* ===== 입력 ===== */
-.footer{
+/* 카드 */
+.card{
+  background:white;
+  padding:18px;
+  border-radius:20px;
+  margin-bottom:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* 캐릭터 */
+.character{
+  text-align:center;
+  font-size:50px;
+  margin-top:20px;
+  animation:float 2s infinite ease-in-out;
+}
+
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+  100%{transform:translateY(0)}
+}
+
+/* 채팅 */
+.chat{
+  flex:1;
+  overflow:auto;
+  padding:20px;
+  padding-bottom:140px;
+}
+
+.msg{
+  margin-bottom:10px;
+  max-width:75%;
+}
+
+.bot{
+  background:white;
+  padding:12px;
+  border-radius:14px;
+}
+
+.user{
+  background:var(--main);
+  color:white;
+  padding:12px;
+  border-radius:14px;
+  margin-left:auto;
+}
+
+/* 입력 */
+.inputbar{
   position:fixed;
   bottom:0;
   width:100%;
-  background:#fff;
   display:flex;
   padding:10px;
+  background:var(--bg);
 }
 
 input{
   flex:1;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid #ddd;
+  padding:12px;
+  border-radius:20px;
+  border:none;
 }
 
-button{
-  margin-left:6px;
-  border:none;
-  background:#7B4F2E;
-  color:#fff;
-  border-radius:10px;
-  padding:10px;
+.send{
+  background:var(--main);
+  color:white;
+  padding:12px;
+  border-radius:50%;
 }
 </style>
 </head>
 
 <body>
 
-<div class="onboarding" id="onboarding">
-  <h1>책친구</h1>
-  <p>책의 한 문장이 당신에게 말을 건넵니다</p>
-  <button onclick="startApp()">시작하기</button>
-</div>
-
-<div class="header">📖 책친구</div>
-
 <!-- 감정 -->
-<div class="emotions" id="emotionBox">
-  <div class="emotion-card" onclick="selectEmotion('불안')">불안</div>
-  <div class="emotion-card" onclick="selectEmotion('외로움')">외로움</div>
-  <div class="emotion-card" onclick="selectEmotion('후회')">후회</div>
-  <div class="emotion-card" onclick="selectEmotion('자존감')">자존감</div>
+<div id="s1" class="screen active">
+  <div class="header">오늘 마음은 어떤 색이야?</div>
+
+  <div class="character">📖✨</div>
+
+  <div class="body">
+    <div class="card" onclick="pickEmotion('불안')">🌫 불안</div>
+    <div class="card" onclick="pickEmotion('외로움')">🌙 외로움</div>
+    <div class="card" onclick="pickEmotion('지침')">🍂 지침</div>
+  </div>
 </div>
 
-<!-- 책 추천 -->
-<div class="book-list" id="bookList" style="display:none;"></div>
+<!-- 공감 -->
+<div id="s2" class="screen">
+  <div class="header">책친구가 전하는 말</div>
+
+  <div class="character">📖🤍</div>
+
+  <div class="body">
+    <div id="empathy"></div>
+    <button onclick="goBooks()">책을 펼쳐볼까?</button>
+  </div>
+</div>
+
+<!-- 책 -->
+<div id="s3" class="screen">
+  <div class="header">오늘의 책</div>
+  <div class="body" id="bookList"></div>
+</div>
+
+<!-- 문장 -->
+<div id="s4" class="screen">
+  <div class="header">책의 한마디</div>
+  <div class="body">
+    <div id="quoteBox"></div>
+    <button onclick="goChat()">이야기 나누기</button>
+  </div>
+</div>
 
 <!-- 채팅 -->
-<div class="chat" id="chat" style="display:none;"></div>
+<div id="s5" class="screen">
+  <div class="header">책친구</div>
+  <div class="chat" id="chat"></div>
 
-<div class="footer">
-  <input id="input" placeholder="생각을 적어보세요">
-  <button onclick="send()">전송</button>
+  <div class="inputbar">
+    <input id="input">
+    <div class="send" onclick="send()">↑</div>
+  </div>
 </div>
 
 <script>
 
-/* ===== 데이터 ===== */
-const BOOKS = {
-  불안:[
-    {title:"데미안", text:"새는 알을 깨고 나온다."},
-    {title:"어린왕자", text:"중요한 건 눈에 보이지 않아."},
-    {title:"월든", text:"나는 의도적으로 살기 위해 숲으로 갔다."}
-  ],
-  외로움:[
-    {title:"노르웨이의 숲", text:"사람은 결국 혼자야."},
-    {title:"자기 앞의 생", text:"그래도 사람은 서로 필요해."}
-  ],
-  후회:[
-    {title:"위대한 개츠비", text:"우리는 과거로 돌아가려 한다."}
-  ],
-  자존감:[
-    {title:"데미안", text:"나는 나로 존재한다."}
-  ]
+/* 감정 공감 문장 */
+const EMPATHY = {
+  불안:'괜찮아, 지금 흔들리는 건 자연스러운 일이야.',
+  외로움:'혼자라고 느껴지는 순간도, 사실은 지나가는 과정이야.',
+  지침:'많이 애썼구나, 잠시 쉬어도 괜찮아.'
 };
 
-let selectedBook = null;
+/* 책 데이터 */
+const BOOKS = [
+  {title:'데미안', quote:'새는 알을 깨고 나온다.'},
+  {title:'어린왕자', quote:'가장 중요한 건 눈에 보이지 않아.'}
+];
 
-/* ===== 시작 ===== */
-function startApp(){
-  onboarding.style.display='none';
+let emotion='';
+let selectedBook=null;
+
+/* 화면 */
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
 }
 
-/* ===== 감정 선택 ===== */
-function selectEmotion(emotion){
-  emotionBox.style.display='none';
-
-  const list = BOOKS[emotion];
-  const el = document.getElementById('bookList');
-  el.style.display='block';
-
-  el.innerHTML = list.map(b=>`
-    <div class="book-card" onclick="chooseBook('${b.title}','${b.text}')">
-      <div class="book-title">${b.title}</div>
-      <div class="book-preview">${b.text}</div>
-    </div>
-  `).join('');
+/* 감정 선택 */
+function pickEmotion(e){
+  emotion=e;
+  document.getElementById('empathy').innerText=EMPATHY[e];
+  show('s2');
 }
 
-/* ===== 책 선택 ===== */
-function chooseBook(title,text){
-  selectedBook = {title,text};
+/* 책 */
+function goBooks(){
+  renderBooks();
+  show('s3');
+}
 
-  bookList.style.display='none';
-  chat.style.display='block';
+function renderBooks(){
+  const el=document.getElementById('bookList');
+  el.innerHTML='';
 
-  chat.innerHTML += `
-    <div class="quote-card">
-      "${text}"<br><br><b>${title}</b>
-    </div>
+  BOOKS.forEach(b=>{
+    const div=document.createElement('div');
+    div.className='card';
+    div.innerText=b.title;
+    div.onclick=()=>selectBook(b);
+    el.appendChild(div);
+  });
+}
+
+/* 선택 */
+function selectBook(b){
+  selectedBook=b;
+
+  document.getElementById('quoteBox').innerHTML=`
+    <h2>${b.title}</h2>
+    <p>${b.quote}</p>
   `;
 
-  bot("이 문장에서 가장 마음에 걸린 부분은 어디야?");
+  show('s4');
 }
 
-/* ===== 채팅 ===== */
-function user(msg){
-  chat.innerHTML += `<div class="msg user"><div class="bubble">${msg}</div></div>`;
-  scroll();
+/* 채팅 */
+function goChat(){
+  show('s5');
+
+  bot(`"${selectedBook.quote}"`);
+  bot('이 문장이 지금 너에게 어떤 의미로 느껴져?');
 }
 
-function bot(msg){
-  chat.innerHTML += `<div class="msg bot"><div class="bubble">${msg}</div></div>`;
-  scroll();
+function append(type,text){
+  const chat=document.getElementById('chat');
+
+  const div=document.createElement('div');
+  div.className='msg '+type;
+  div.innerText=text;
+
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
 }
+
+function bot(t){append('bot',t);}
+function user(t){append('user',t);}
 
 function send(){
-  const val = input.value.trim();
-  if(!val) return;
+  const input=document.getElementById('input');
+  const msg=input.value;
+  if(!msg) return;
 
-  user(val);
+  user(msg);
   input.value='';
 
   setTimeout(()=>{
-    bot("그 감정을 한 문장으로 정리해볼 수 있을까?");
-  },600);
-}
-
-/* ===== 스크롤 ===== */
-function scroll(){
-  setTimeout(()=>{
-    chat.scrollTop = chat.scrollHeight;
-  },50);
+    bot('그 감정을 조금 더 들려줄래?');
+  },400);
 }
 
 </script>
