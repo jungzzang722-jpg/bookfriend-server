@@ -326,45 +326,65 @@ document.addEventListener('DOMContentLoaded', () => {
 .nmitem{display:flex;align-items:center;gap:14px;padding:13px 22px;cursor:pointer;transition:background .15s}
 .nmitem:hover{background:var(--lb)}
 
-/* ══ BOTTOM NAV (푸터) ══ */
-.bnav {
-    flex-shrink: 0;
+/* 1. 기본 구조 설정 */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
     background: var(--cr);
-    border-top: 1px solid var(--lb);
-    z-index: 100; /* 채팅창보다 무조건 위에 */
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh; /* 최신 브라우저 대응 */
+    height: 100vh;  /* dvh 미지원 브라우저 대비 */
+    overflow: hidden;
     position: relative;
 }
 
-.bnav-row {
-    display: flex !important;
-    max-width: 480px;
-    margin: 0 auto;
-    /* 세로 길이를 결정하는 핵심: 12px에서 6px로 축소 */
-    padding: 6px 8px calc(var(--sab) + 6px) !important;
-    height: auto !important;
-}
-
-/* ══ CHAT AREA (가려짐 방지 핵심) ══ */
+/* 2. 채팅 영역 (스크롤 가능) */
 #chat {
     flex: 1;
     overflow-y: auto;
-    padding: 20px !important;
-    /* 아래 패딩을 '비정상적'으로 크게 줘보세요. 
-       이렇게 해도 가려진다면 브라우저 캐시 문제입니다. */
-    padding-bottom: 180px !important; 
+    padding: 20px;
+    padding-bottom: 120px; /* 푸터 높이에 맞춰 조절 */
     display: flex;
     flex-direction: column;
     gap: 14px;
     -webkit-overflow-scrolling: touch;
 }
 
-/* 채팅창 전용 입력 영역(S9 안에 있는 경우) */
-.input-area {
-    padding: 8px 16px !important;
-    padding-bottom: calc(var(--sab) + 8px) !important;
-    min-height: 60px !important;
-    (goTo(9) 함수 실행 시 document.querySelector('.bnav').style.display = 'none' 추가) 
+/* 3. 하단 입력창 및 네비게이션 */
+.bnav {
+    flex-shrink: 0;
+    background: var(--cr);
+    border-top: 1px solid var(--lb);
+    z-index: 100;
+    position: relative;
 }
+
+.input-area {
+    min-height: 60px;
+    background: var(--cr);
+    padding: 8px 16px;
+    padding-bottom: calc(var(--sab) + 8px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    /* JS 로직 참고: goTo(9) 실행 시 .bnav 숨김 처리 필요 */
+}
+
+/* 4. 기타 메시지 스타일 (기존 유지) */
+.cmsg { max-width: 84%; }
+.cmsg.bot { align-self: flex-start; }
+.cmsg.user { align-self: flex-end; }
+.cbubble { padding: 15px 18px; border-radius: 20px; font-size: 15px; line-height: 1.72; }
+.cmsg.bot .cbubble { background: #fff; color: var(--dk); box-shadow: 0 1px 8px rgba(62,32,16,.07); }
+.cmsg.user .cbubble { background: var(--bg); color: #fff; }
+
+/* ... 나머지 스타일 (qcard, bookcard 등)은 그대로 유지 ... */ 
 <!-- ═══ S1 · SPLASH ═══ -->
 <div class="screen active" id="s1" onclick="goTo(2)" style="background:var(--cr);align-items:center;justify-content:center;gap:18px;cursor:pointer">
   <svg style="animation:fadeInUp .9s ease both" width="88" height="88" viewBox="0 0 88 88" fill="none">
