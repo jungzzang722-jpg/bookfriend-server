@@ -31,27 +31,34 @@ html, body {
 }
 
 /* 2. 채팅창 바디 (패딩값 조정) */
+/* 기존 .chatbody를 찾아서 이 코드로 교체 */
 .chatbody {
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
-    /* 중요: 하단 Safe Area + 입력창 높이만큼 충분한 여백 확보 */
-    padding: 20px 20px calc(env(safe-area-inset-bottom) + 120px) !important;
-    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding: 14px 20px;
+    /* 핵심: 아이폰 하단 툴바(sab) + 입력창 높이를 고려한 여백 */
+    padding-bottom: calc(var(--sab) + 120px) !important; 
 }
 
-/* 3. 푸터(입력창) 위치 보정 */
+/* 기존 .cinputbar를 찾아서 이 코드로 교체 */
 .cinputbar {
-    position: fixed; /* absolute보다 fixed가 툴바 위 고정에 더 유리할 수 있습니다 */
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 100;
     background: var(--cr);
     border-top: 1px solid var(--lb);
-    /* 핵심: 아이폰 하단 바(Safe Area) 만큼 위로 띄움 */
-    padding: 12px 20px calc(env(safe-area-inset-bottom) + 12px) !important;
+    /* 핵심: 아이폰 홈 바/툴바 영역만큼 바닥에서 띄움 */
+    padding: 12px 20px calc(var(--sab) + 12px);
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
     
     /* 입력창 자체도 하단 여백을 고려해야 합니다. */
@@ -120,23 +127,18 @@ function nowTime() {
 }
 
 /* === 채팅 메시지 생성 (오류 수정 통합본) === */
+// appendMsg 함수 내부의 chat.scrollTop 부분을 아래처럼 수정
 function appendMsg(msg, type) {
-    const chat = document.getElementById('chat');
-    if(!chat) return;
+    // ... 기존 코드 (div 생성 및 appendChild) ...
 
-    const div = document.createElement('div');
-    div.className = 'cmsg ' + type;
-    div.innerHTML = `
-        <div class="cbubble">${msg.replace(/\n/g, '<br>')}</div>
-        <div class="ctime">${nowTime()}</div>
-        // appendMsg 함수 내부의 스크롤 코드 수정
-setTimeout(() => {
-    // 100px 정도 더 여유 있게 내려서 툴바 위로 확실히 올립니다.
-    chat.scrollTo({
-        top: chat.scrollHeight + 100, 
-        behavior: 'smooth'
-    });
-}, 150);
+    // 메시지 추가 후 스크롤을 더 아래로 밀어서 툴바 위로 올림
+    setTimeout(() => {
+        chat.scrollTo({
+            top: chat.scrollHeight + 100, // 100px 정도 여유를 더 줌
+            behavior: 'smooth'
+        });
+    }, 150);
+}
     `;
     chat.appendChild(div);
 
